@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  name         String
+  password     String
+  phone        String
+  type         String        @default("regular")
+  Wishlist     Wishlist[]
+  Reservations Reservation[]
+  Rooms        Room[]
+}
+
+model Room {
+  id               Int           @id @default(autoincrement())
+  title            String
+  thumbnail        String
+  images           Image[]
+  price            Int
+  lon              Decimal
+  lat              Decimal
+  address          String
+  type             String
+  bedRooms         Int           @default(1)
+  features          Feature[]
+  description      String
+  owner            User          @relation(fields: [ownerId], references: [id])
+  ownerId          Int
+  UnavailableDates Reservation[]
+  Wishlist         Wishlist[]
+}
+
+model Image {
+  id     Int    @id @default(autoincrement())
+  title  String
+  url    String
+  Room   Room   @relation(fields: [roomId], references: [id])
+  roomId Int
+}
+
+model Reservation {
+  id         Int       @id @default(autoincrement())
+  userId     Int?
+  roomId     Int
+  from       DateTime
+  to         DateTime
+  createdAt  DateTime? @default(now())
+  acceptedAt DateTime?
+  status     String    @default("pending")
+  totalPrice Int?      @default(0)
+  room       Room      @relation(fields: [roomId], references: [id])
+  user       User?     @relation(fields: [userId], references: [id])
+}
+
+model Wishlist {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  roomId Int
+  user   User @relation(fields: [userId], references: [id])
+  room   Room @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId])
+}
+
+model Feature {
+  id     Int    @id @default(autoincrement())
+  name   String
+  Room   Room   @relation(fields: [roomId], references: [id])
+  roomId Int
+}
