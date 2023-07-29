@@ -2,6 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { PrismaService } from 'src/prisma.service';
+import { whereType } from './entities/where.type'
+import { queriestype } from './entities/queries.type';
+import { Room } from '@prisma/client';
 @Injectable()
 export class RoomsService {
 
@@ -23,32 +26,36 @@ export class RoomsService {
       console.log(error)
       throw new HttpException({
         status: HttpStatus.BAD_REQUEST,
-        error: "couldn'nt create room"
+        error: "couldn't create room"
       }, HttpStatus.BAD_REQUEST)
     }
 
   }
 
-  async findAll(queries) {
-    let rooms
-
-    if (queries.rooms) {
-      rooms = await this.prisma.room.findMany({
-        where: {
-          bedRooms: Number(queries.rooms),
-          address: { contains: queries.location }
-        },
-        include: {
-          UnavailableDates: true
+  async findAll(queries: queriestype) {
+    const where: whereType = {};
+    let rooms: Room[]
+    if (queries.from && queries.to) {
+      where.NOT = {
+        UnavailableDates: {
+          some: {
+            from: { lte: queries.to },
+            to: { gte: queries.from }
+          }
         }
-      })
-      // I need to filter based on dates here
-
+      }
     }
-    else {
-      rooms = await this.prisma.room.findMany()
+    if (queries.rooms) {
+      where.bedRooms = Number(queries.rooms)
     }
-
+    if (queries.location) {
+      where.address = {
+        contains: queries.location
+      }
+    }
+    rooms = await this.prisma.room.findMany({
+      where,
+    })
     return rooms;
   }
 
