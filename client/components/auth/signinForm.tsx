@@ -75,7 +75,7 @@ export function SigninForm({ className, ...props }: UserAuthFormProps) {
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="grid gap-2">
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
@@ -86,7 +86,7 @@ export function SigninForm({ className, ...props }: UserAuthFormProps) {
                     autoComplete="email"
                     autoCorrect="off"
                     disabled={isLoading}
-                    className="w-96"
+                    className=""
                     {...field}
                   />
                 </FormControl>
@@ -129,25 +129,40 @@ export function SigninForm({ className, ...props }: UserAuthFormProps) {
           <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <svg
-            className="mr-2 h-4 w-4"
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="#888888"
-              d="M20.855 10.361a.197.197 0 0 0-.194-.161H12.2a.2.2 0 0 0-.2.2v3.2c0 .11.09.2.2.2h4.886A5.398 5.398 0 0 1 6.6 12A5.4 5.4 0 0 1 12 6.6a5.37 5.37 0 0 1 3.44 1.245a.205.205 0 0 0 .276-.01l2.266-2.267a.197.197 0 0 0-.007-.286A8.953 8.953 0 0 0 12 3a9 9 0 1 0 9 9c0-.547-.051-1.113-.145-1.639Z"
-            />
-          </svg>
-        )}{" "}
-        google
-      </Button>
+      <div className="grid grid-cols-2 gap-2">
+        <Button variant="outline" type="button" disabled={isLoading}>
+          {isLoading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                fill="#888888"
+                d="M20.855 10.361a.197.197 0 0 0-.194-.161H12.2a.2.2 0 0 0-.2.2v3.2c0 .11.09.2.2.2h4.886A5.398 5.398 0 0 1 6.6 12A5.4 5.4 0 0 1 12 6.6a5.37 5.37 0 0 1 3.44 1.245a.205.205 0 0 0 .276-.01l2.266-2.267a.197.197 0 0 0-.007-.286A8.953 8.953 0 0 0 12 3a9 9 0 1 0 9 9c0-.547-.051-1.113-.145-1.639Z"
+              />
+            </svg>
+          )}{" "}
+          google
+        </Button>
+        <Button variant="outline" type="button" disabled={isLoading}>
+          {isLoading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <svg
+              className="mr-2 h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              width="15.56"
+              height="32"
+              viewBox="0 0 486.037 1000"
+            >
+              <path
+                fill="#888888"
+                d="M124.074 1000V530.771H0V361.826h124.074V217.525C124.074 104.132 197.365 0 366.243 0C434.619 0 485.18 6.555 485.18 6.555l-3.984 157.766s-51.564-.502-107.833-.502c-60.9 0-70.657 28.065-70.657 74.646v123.361h183.331l-7.977 168.945H302.706V1000H124.074"
+              />
+            </svg>
+          )}{" "}
+          Facebook
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { deleteCookie, getCookie } from "cookies-next"
+import { deleteCookie, getCookie } from "cookies-next";
 
 import { Menu, LucideUser, Home, LifeBuoy, Heart, LogOut, UserPlus } from "lucide-react";
 import { Button } from "../ui/button";
@@ -17,9 +17,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
 import { useAtom, atom } from "jotai";
 
-
-
-export const isLoggedinAtom = atom<boolean>(false)
+export const isLoggedinAtom = atom<boolean>(false);
 export default function ProfileMenu() {
   // const isLoggedin = true;
   const [isLoggedin, setisLoggedin] = useAtom(isLoggedinAtom);
@@ -27,14 +25,14 @@ export default function ProfileMenu() {
   React.useEffect(() => {
     const RefreshToken = getCookie("refresh_token");
     if (RefreshToken) {
-      setisLoggedin(true)
+      setisLoggedin(true);
     }
-  }, [isLoggedin])
+  }, [isLoggedin]);
   const handleLogout = () => {
     // I need to delete cookies
-    deleteCookie("refresh_token")
-    deleteCookie("access_token")
-    setisLoggedin(false)
+    deleteCookie("refresh_token");
+    deleteCookie("access_token");
+    setisLoggedin(false);
   };
   return (
     <DropdownMenu>
@@ -43,7 +41,7 @@ export default function ProfileMenu() {
           <div className="flex items-center">
             <Menu />
             <Avatar className="h-6 w-6 ml-2">
-              <AvatarFallback >
+              <AvatarFallback>
                 <LucideUser className="fill-secondary stroke-primary" />
               </AvatarFallback>
             </Avatar>
@@ -80,13 +78,13 @@ export default function ProfileMenu() {
           <>
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Link className="flex" href="/login">
+                <Link className="flex" href="/auth/signin">
                   <LucideUser className="mr-2 h-4 w-4" />
-                  <span>Login</span>
+                  <span>Signin</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link className="flex" href="/register">
+                <Link className="flex" href="/auth/signup">
                   <UserPlus className="mr-2 h-4 w-4" />
                   <span>Sign up</span>
                 </Link>
