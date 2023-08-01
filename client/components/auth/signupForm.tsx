@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import {
   Form,
@@ -60,16 +59,17 @@ export function SignupForm({ className, ...props }: UserAuthFormProps) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
-    if (values.password == values.confirmPassword) {
-      try {
-        const res = await axios.post("http://localhost:5000/auth/signin", values, {
-          withCredentials: true,
-        });
-        console.log(res);
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    console.log('submitted')
+    // if (values.password == values.confirmpassword) {
+    //   try {
+    //     const res = await axios.post("http://localhost:5000/auth/signin", values, {
+    //       withcredentials: true,
+    //     });
+    //     console.log(res);
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // }
   }
 
   return (
@@ -98,71 +98,26 @@ export function SignupForm({ className, ...props }: UserAuthFormProps) {
                       />
                     </FormControl>
                     <FormMessage />
+                    <Button
+                      disabled={isLoading}
+                      onClick={() => {
+                        const Validation = formSchema
+                          .pick({ email: true })
+                          .safeParse({ email: field.value });
+                        if (Validation.success) {
+                          setStep(Step + 1);
+                        }
+                      }}
+                    >
+                      {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Sign In with Email
+                    </Button>
                   </FormItem>
                 )}
               />
-              <Button
-                disabled={isLoading}
-                onClick={(value) => {
-                  console.log(value);
-                  setStep(Step + 1);
-                }}
-              >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Sign In with Email
-              </Button>
             </div>
           )}
-
           {Step == 2 && (
-            <div className="grid gap-2">
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem className="grid gap-2">
-                    <FormLabel>password</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="password"
-                        placeholder="******"
-                        type="password"
-                        disabled={isLoading}
-                        className=""
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem className="grid gap-2">
-                    <FormLabel>confirm password</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="password"
-                        placeholder="******"
-                        type="password"
-                        disabled={isLoading}
-                        className=""
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button disabled={isLoading} onClick={() => setStep(Step + 1)}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Next
-              </Button>
-            </div>
-          )}
-          {Step == 3 && (
             <div className="grid gap-2">
               <FormField
                 control={form.control}
@@ -204,11 +159,60 @@ export function SignupForm({ className, ...props }: UserAuthFormProps) {
                   </FormItem>
                 )}
               />
+              <Button disabled={isLoading} onClick={() => setStep(Step + 1)}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Next
+              </Button>
+            </div>
+          )}
+
+          {Step == 3 && (
+            <div className="grid gap-2">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="grid gap-2">
+                    <FormLabel>password</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="password"
+                        placeholder="******"
+                        type="password"
+                        disabled={isLoading}
+                        className=""
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem className="grid gap-2">
+                    <FormLabel>confirm password</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="confirmPassword"
+                        placeholder="******"
+                        type="password"
+                        disabled={isLoading}
+                        className=""
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           )}
         </form>
         {Step == 3 && (
-          <Button disabled={isLoading}>
+          <Button disabled={isLoading} onClick={() => console.log(Form.name)}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Submit
           </Button>

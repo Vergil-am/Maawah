@@ -1,38 +1,24 @@
-import { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { SignupForm } from "@/components/auth/signupForm";
+"use client"
+import DetailsForm from "@/components/auth/signup/detailsForm";
+import EmailForm from "@/components/auth/signup/emailForm";
+import PasswordForm from "@/components/auth/signup/passwordForm";
+import { atom, useAtomValue } from "jotai";
 
-export const metadata: Metadata = {
-  title: "Authentication",
-  description: "Authentication forms built using the components.",
-};
-
+export const StepAtom = atom<number>(1)
+export const UserAtom = atom({
+  name: "",
+  email: "",
+  phone: ""
+})
 export default function AuthenticationPage() {
-  return (
-    <>
-      <div className="lg:p-8 h-full grid place-items-center">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
-            <p className="text-sm text-muted-foreground">
-              already have an accout? <Link href="/auth/signin">Signin</Link>
-            </p>
-          </div>
-          <SignupForm />
-          <p className="px-8 text-center text-sm text-muted-foreground">
-            By clicking continue, you agree to our{" "}
-            <Link href="/terms" className="underline underline-offset-4 hover:text-primary">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link href="/privacy" className="underline underline-offset-4 hover:text-primary">
-              Privacy Policy
-            </Link>
-            .
-          </p>
-        </div>
-      </div>
-    </>
-  );
+  const Step = useAtomValue(StepAtom)
+  switch (Step) {
+    case 1:
+      return <EmailForm />
+    case 2:
+      return <DetailsForm />
+    case 3:
+      return <PasswordForm />
+  }
+
 }
