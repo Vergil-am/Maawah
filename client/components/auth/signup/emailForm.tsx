@@ -44,7 +44,7 @@ export default function EmailForm() {
     setStep(Step + 1)
   }
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 ">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-2">
