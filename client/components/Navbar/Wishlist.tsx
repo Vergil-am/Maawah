@@ -9,23 +9,23 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { HeartIcon } from "lucide-react";
-import { use, useEffect } from "react";
+import { HeartIcon, MapPin } from "lucide-react";
+import { use } from "react";
 import { MakeRequest } from "@/lib/fetcher";
-import { useState } from "react";
 import { useAtomValue } from "jotai";
 import Link from "next/link";
 import { isLoggedinAtom } from "@/components/Navbar/ProfileMenu";
 import wishlist from "@/interfaces/wishlist";
-
+import { Card, CardContent, CardTitle } from "../ui/card";
+import { Pin } from "lucide-react";
 const options = {
   method: "get",
   withCredentials: true,
 };
-
 const getWishlist = MakeRequest("http://localhost:5000/wishlist", options)
   .then((res) => res)
   .catch((err) => console.log(err));
+
 
 export default function Wishlist() {
   const isLoggedin = useAtomValue(isLoggedinAtom);
@@ -34,25 +34,9 @@ export default function Wishlist() {
     const Wishlist = use(getWishlist);
     wishlist = Wishlist;
   }
-  // const [wishlist, setWishlist] = useState<wishlist[]>()
-  // useEffect(() => {
-  //   const options = {
-  //     method: "get",
-  //     withCredentials: true,
-  //   }
-
-  //   async function getWishlist() {
-  //     const res = await MakeRequest("http://localhost:5000/wishlist", options);
-  //     setWishlist(res)
-
-  //   }
-  //   getWishlist()
-
-  // }, [isLoggedin])
 
   return (
     <>
-      {/* {isLoggedin ? ( */}
       <Sheet>
         <SheetTrigger asChild>
           <HeartIcon />
@@ -67,10 +51,19 @@ export default function Wishlist() {
               wishlist.map((item) => {
                 return (
                   <Link key={item.id} href={`rooms/${item.room.id}`}>
-                    <div>
-                      <h2>{item.room.title}</h2>
-                      <img src={item.room.thumbnail} alt={item.room.title} />
-                    </div>
+                    <Card >
+                      <CardContent className="relative pt-4 grid grid-cols-2 grid-rows-1 gap-4">
+                        <div className="">
+                          <img src={item.room.thumbnail} className="rounded-lg" />
+                        </div>
+                        <div>
+                          <CardTitle className="">{item.room.title}</CardTitle>
+                          <p className="text-xl text-muted-foreground">{item.room.type}</p>
+                          <p className="text-sm text-muted-foreground flex content-center"><MapPin size={16} className="mr-2" />{item.room.address}</p>
+                        </div>
+                        <p className="absolute bottom-2 right-4">{item.room.price} $ /Night</p>
+                      </CardContent>
+                    </Card>
                   </Link>
                 );
               })
@@ -88,7 +81,6 @@ export default function Wishlist() {
           </SheetFooter>
         </SheetContent>
       </Sheet>
-      {/* ) : null} */}
     </>
   );
 }

@@ -1,106 +1,71 @@
-"use client";
+"use client"
+import React from 'react'
+import { Card, CardHeader, CardFooter, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { BedSingle, Bath, Warehouse, Home, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { DatePickerWithRange } from "@/components/ui/daterange-picker";
-import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
-import { DateRange } from "react-day-picker";
-import { addDays } from "date-fns";
-import { useRouter, useParams } from "next/navigation";
-import Auth from "@/lib/getToken";
-import { MakeRequest } from "@/lib/fetcher";
-import { toast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
+import { RentalCardProps } from '@/interfaces/CardProps';
+import { DatePickerWithRange, DateRangeAtom } from '../ui/daterange-picker';
+import { useAtomValue } from 'jotai';
+import { MakeRequest } from '@/lib/fetcher';
+import { isLoggedinAtom } from '../Navbar/ProfileMenu';
+import { toast } from '../ui/use-toast';
 
-export default function ReserveCard({ props }: any) {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
-    to: addDays(new Date(), 15),
-  });
-  const router = useRouter();
-  const params = useParams();
-  const { isLoggedin } = Auth();
+export default function ReserveCard({ props }: RentalCardProps) {
+  const isLoggedin = useAtomValue(isLoggedinAtom)
+  const dateRange = useAtomValue(DateRangeAtom)
+  async function onSumbmit() {
+    if (isLoggedin) {
+      try {
+        const options = {
+          method: "post",
+          withCredentials: true,
+          data: {
+            from: dateRange?.from,
+            to: dateRange?.to
 
-  const GetDateRange = (range: DateRange | undefined) => {
-    setDate(range);
-  };
+          },
+        };
+        const res = await MakeRequest(`http://localhost:5000/reservation/${props.id}`, options);
+        toast({
+          title: `${props.title}`,
+          description: "reservation created",
+        });
 
-  const Submit = async () => {
-    try {
-      const options = {
-        method: "put",
-        withCredentials: true,
-        data: {
-          from : date?.from?.toISOString(),
-          to : date?.to?.toISOString(),
-        },
-      };
-      const res = await MakeRequest(
-        `http://localhost:5000/properties/reservation/${params.id}`,
-        options
-      );
-      toast({
-        title: `Reservation successful`,
-        description: `${res}`,
-        action: <ToastAction altText="Goto wishlist to undo">Undo</ToastAction>,
-      });
-      console.log(res);
-    } catch (err) {
-      throw new Error("can't make reservation");
+      } catch (err) {
+        console.log(err)
+      }
     }
-  };
+  }
   return (
-    <Sheet modal={false}>
-      <SheetTrigger asChild>
-        <Button> Reserve</Button>
-      </SheetTrigger>
-      <SheetContent className="mt-20 max-sm:w-screen max-md:w-3/4 max-lg:w-3/5">
-        {isLoggedin ? (
-          <>
-            <SheetHeader className="flex justify-center">
-              <SheetTitle>Reservation</SheetTitle>
-              <SheetDescription>Make your reservation now</SheetDescription>
-            </SheetHeader>
+    <div className="w-2/5 flex flex-col justify-center items-center max-lg:w-screen mt-2 ">
+      <Card className="max-md:w-full max-lg:w-4/5 lg:fixed lg:w-1/3 xl:w-1/4">
+        <CardHeader className="flex items-center">
+          <CardTitle>{props.title}</CardTitle>
+          <CardDescription className='flex '><MapPin size={16} className='mr-2' /> {props.address}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center flex-col">
+          <ul className="max-lg:flex max-lg:justify-between">
+            <li className="flex m-2 max-lg:flex-col">
+              <BedSingle color="#000000" className="mr-2" /> Bedrooms : 4
+            </li>
 
-            <Card className="m-2">
-              <CardHeader>
-                <CardTitle className="flex justify-center">Reserve Now</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col justify-center">
-                <DatePickerWithRange
-                  className="flex justify-center z-50"
-                  GetDateRange={GetDateRange}
-                  date={date}
-                />
-                <Button onClick={Submit}>Reserve</Button>
-              </CardContent>
-              <Separator />
-              <CardFooter className="flex flex-col justify-center">
-                <div className="flex justify-between w-full">
-                  <p>Price: </p>
-                  <p>{props.price} $ /Night </p>
-                </div>
-                <div className="flex justify-between w-full">
-                  <p>Total Price: </p>
-                  <p>500$</p>
-                </div>
-              </CardFooter>
-            </Card>
-          </>
-        ) : (
-          <>
-            <Button onClick={() => router.push("/login")}>Login</Button>
-          </>
-        )}
-      </SheetContent>
-    </Sheet>
-  );
+            <li className="flex m-2 max-lg:flex-col">
+              <Bath color="#000000" className="mr-2" /> Bathrooms : 1
+            </li>
+            <li className="flex m-2 max-lg:flex-col">
+              <Warehouse color="#000000" className="mr-2" /> Garages : yes
+            </li>
+            <li className="flex m-2 max-lg:flex-col">
+              <Home color="#000000" className="mr-2" /> Size : 200 m2
+            </li>
+          </ul>
+        </CardContent>
+        <CardFooter className="flex flex-col items-center w-full">
+          <h1>{props.price} $ / Night</h1>
+          <DatePickerWithRange />
+          <Button onClick={onSumbmit}> Reserve Now</Button>
+        </CardFooter>
+      </Card>
+    </div>
+  )
 }

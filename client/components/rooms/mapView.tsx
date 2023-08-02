@@ -13,8 +13,7 @@ export default function MapsView({ Coordinates }: params) {
   return (
     <div>
       <Map provider={osm} height={500} defaultCenter={[lat, lon]} defaultZoom={13}>
-        <Marker width={50} anchor={[lat, lon]} />
+        <Marker width={50} anchor={[lon, lat]} />
       </Map>
-    </div>
-  );
+    </div>);
 }
