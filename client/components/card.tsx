@@ -36,7 +36,6 @@ const Ammenities: { name: string; icon: JSX.Element }[] = [
   },
 ];
 export default function RoomCard({ props }: RentalCardProps) {
-  console.log(props);
 
   return (
     <Card className="w-72 m-2.5 relative max-sm:w-screen">
@@ -53,7 +52,7 @@ export default function RoomCard({ props }: RentalCardProps) {
         <CardContent>
           <ul className="flex justify-between overflow-hidden text-muted-foreground">
             {Ammenities.map((Ammenity) => {
-              return <li>{Ammenity.icon}</li>;
+              return <li key={Ammenity.name}>{Ammenity.icon}</li>;
             })}
           </ul>
         </CardContent>
