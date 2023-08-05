@@ -6,16 +6,16 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './LocalLoginStrategy';
 import { JwtStrategy } from './JwtStrategy';
+import { ResendService } from 'src/resend.service';
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
-      //this should be changed to a more secure key
+      //TODO: this should be changed to a more secure key
       secret: 'KLt2bX1aUIGqVFv5luavkFKoniVjfTLI',
-      // signOptions: { expiresIn: '1d' },
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy]
+  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy, ResendService]
 })
 export class AuthModule { }

@@ -3,10 +3,12 @@ import { SignupDto } from './dto/signup.dto';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma.service';
 import * as argon2 from "argon2"
+import { ResendService } from 'src/resend.service';
 
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService,
+    private resend: ResendService,
     private jwtService: JwtService) { }
 
   async Signup(SignupDto: SignupDto) {
@@ -38,15 +40,36 @@ export class AuthService {
 
   }
 
+  async sendEmail(emails: string[], subject: string) {
+    //TODO:  email 
+    try {
+      const data = await this.resend.emails.send({
+        from: process.env.RESEND_EMAIL,
+        to: emails,
+        subject: subject,
+        html: `<strong> Hello </strong>`,
+      });
+
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async Signin(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: email }
-    })
+    const user = await this.FindUserByEmail(email)
     if (user && await argon2.verify(user.password, password)) {
       const { password, ...result } = user;
       return result
     }
     throw new UnauthorizedException('wrong email or password')
+  }
+
+  async FindUserByEmail(email: string) {
+    return await this.prisma.user.findUnique({
+      where: { email: email }
+    })
+
   }
 
 

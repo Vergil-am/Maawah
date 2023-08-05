@@ -1,6 +1,5 @@
 import ProfileMenu from "./ProfileMenu";
 import SearchBox from "./SearchBox";
-import Wishlist from "./Wishlist";
 import Link from "next/link";
 export default function Navbar() {
   return (
@@ -37,9 +36,7 @@ export default function Navbar() {
                   className="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative "
                 >
                   <div className="flex items-center h-5">
-                    <div className="_xpkakx">
-                      <Wishlist />
-                    </div>
+
                   </div>
                 </button>
               </div>

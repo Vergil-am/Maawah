@@ -51,8 +51,20 @@ export class AuthController {
     } else {
       throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED)
     }
+  }
 
+  @Post("check")
+  async Check(@Body('email') email: string) {
+    console.log(email)
+    const user = await this.authService.FindUserByEmail(email)
+    return user ? true : false
+  }
 
+  @Post("email")
+  Email() {
+    const email = ["olamine336@gmail.com"]
+    const subject = "testing"
+    return this.authService.sendEmail(email, subject)
   }
 
 

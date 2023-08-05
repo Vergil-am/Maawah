@@ -17,6 +17,10 @@ import { Loader2 } from "lucide-react";
 import { useAtom, useSetAtom } from "jotai";
 import { StepAtom } from "@/app/auth/signup/page";
 import { UserAtom } from "@/app/auth/signup/page";
+import axios from "axios";
+import { toast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -27,6 +31,7 @@ const formSchema = z.object({
 export default function EmailForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [Step, setStep] = useAtom(StepAtom)
+  const router = useRouter()
   const setUser = useSetAtom(UserAtom)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,14 +39,38 @@ export default function EmailForm() {
       email: "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    setUser({
-      email: values.email,
-      phone: "",
-      name: "",
-    })
-    setStep(Step + 1)
+    try {
+      const res = await axios.post('http://localhost:5000/auth/check',
+        {
+          email: values.email
+        }
+      )
+      if (res.data == false) {
+        setUser({
+          email: values.email,
+          phone: "",
+          name: "",
+        })
+        setStep(Step + 1)
+
+      } else if (res.data == true) {
+        toast({
+          title: "user already exists",
+          variant: "destructive",
+          description: "user with this email already exists signin instead",
+          action: (
+            <ToastAction altText="Sign in to your account" onClick={() => router.push('/auth/signin')}>Signin</ToastAction>
+          )
+        })
+        setIsLoading(false)
+      }
+
+    } catch (err) {
+      console.log(err)
+    }
+
   }
   return (
     <div className="grid gap-6 ">
