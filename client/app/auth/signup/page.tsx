@@ -2,14 +2,10 @@
 import DetailsForm from "@/components/auth/signup/detailsForm";
 import EmailForm from "@/components/auth/signup/emailForm";
 import PasswordForm from "@/components/auth/signup/passwordForm";
-import { atom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
+import { StepAtom } from "@/lib/Atoms";
 
-const StepAtom = atom<number>(1)
-const UserAtom = atom({
-  name: "",
-  email: "",
-  phone: ""
-})
+
 export default function AuthenticationPage() {
   const Step = useAtomValue(StepAtom)
   switch (Step) {
@@ -22,4 +18,3 @@ export default function AuthenticationPage() {
   }
 
 }
-export { StepAtom, UserAtom }

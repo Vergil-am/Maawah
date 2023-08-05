@@ -21,7 +21,6 @@ export const isLoggedinAtom = atom<boolean>(false);
 export default function ProfileMenu() {
   // const isLoggedin = true;
   const [isLoggedin, setisLoggedin] = useAtom(isLoggedinAtom);
-
   React.useEffect(() => {
     const RefreshToken = getCookie("refresh_token");
     if (RefreshToken) {

@@ -15,8 +15,8 @@ import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useAtom } from "jotai";
-import { StepAtom } from "@/app/auth/signup/page";
-import { UserAtom } from "@/app/auth/signup/page";
+import { StepAtom } from "@/lib/Atoms";
+import { UserAtom } from "@/lib/Atoms";
 
 const formSchema = z.object({
   name: z.string().min(3).includes(" ", {

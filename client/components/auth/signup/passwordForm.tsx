@@ -16,7 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAtomValue } from "jotai";
-import { UserAtom } from "@/app/auth/signup/page";
+
+import { UserAtom } from "@/lib/Atoms";
 import axios from "axios";
 
 const formSchema = z.object({
