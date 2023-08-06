@@ -6,5 +6,7 @@ export class ResendService extends Resend {
   constructor() {
     super(process.env.RESND_API_KEY)
   }
+
+
 }
 

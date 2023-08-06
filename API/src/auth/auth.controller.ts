@@ -1,13 +1,17 @@
-import { Controller, Post, Body, Request, Res, Put, Get, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Request, Res, Put, Get, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ResendService } from 'src/resend.service';
+import { match } from 'assert';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService,
+    private readonly Resend: ResendService
+  ) { }
 
   @Post("signup")
   Signup(@Body() SignupDto: SignupDto) {
@@ -35,8 +39,19 @@ export class AuthController {
 
 
   @Put("reset-password")
-  async ResetPassword() {
-    return this.authService.ResetPassword()
+  async ResetPassword(@Body('email') email: string) {
+    //TODO: fix this temporary
+    const user = await this.authService.FindUserByEmail(email)
+    console.log(user)
+    if (!user) {
+      throw new HttpException("user not found", HttpStatus.NOT_FOUND)
+    }
+    return this.Resend.emails.send({
+      from: process.env.RESEND_EMAIL,
+      to: [email],
+      subject: "reset your password",
+      text: 'reset-password'
+    })
   }
 
   @Get("refresh")
@@ -55,16 +70,27 @@ export class AuthController {
 
   @Post("check")
   async Check(@Body('email') email: string) {
-    console.log(email)
+    const { access_token } = await this.authService.GenerateJWT({ email: email })
     const user = await this.authService.FindUserByEmail(email)
-    return user ? true : false
+    if (user) {
+      return true
+    }
+    return `${process.env.FRONT_END_URL}?${access_token}`
+
+    // this.authService.sendEmail([email], "confirm your email", access_token)
+  }
+
+  @Post('confirm')
+  async ConfirmEmail(@Query('token') token: string) {
+    //TODO: there is more work to do here
+    const validation = await this.authService.VerifyEmailConfirmationToken(token)
+    console.log(validation)
+
   }
 
   @Post("email")
   Email() {
-    const email = ["olamine336@gmail.com"]
-    const subject = "testing"
-    return this.authService.sendEmail(email, subject)
+
   }
 
 

@@ -4,6 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma.service';
 import * as argon2 from "argon2"
 import { ResendService } from 'src/resend.service';
+import { Emails } from 'resend/build/src/emails/emails';
+import { CreateEmailOptions } from 'resend/build/src/emails/interfaces';
 
 @Injectable()
 export class AuthService {
@@ -40,15 +42,9 @@ export class AuthService {
 
   }
 
-  async sendEmail(emails: string[], subject: string) {
-    //TODO:  email 
+  async sendEmail(EmailOptions: CreateEmailOptions) {
     try {
-      const data = await this.resend.emails.send({
-        from: process.env.RESEND_EMAIL,
-        to: emails,
-        subject: subject,
-        html: `<strong> Hello </strong>`,
-      });
+      const data = await this.resend.emails.send(EmailOptions);
 
       console.log(data);
     } catch (error) {
@@ -79,7 +75,6 @@ export class AuthService {
 
   //This function generates an access_token valid for 15min
   async GenerateJWT(payload) {
-    console.log(payload)
     return {
       access_token: this.jwtService.sign(payload, { expiresIn: '15m' }),
     }
@@ -91,10 +86,14 @@ export class AuthService {
       refresh_token: this.jwtService.sign(payload)
     }
   }
+  VerifyEmailConfirmationToken(token: string) {
+    return this.jwtService.verify(token)
+  }
 
   //Check Refresh Token
   async ValidateRefreshToken(refresh_token: string) {
     const token = this.jwtService.verify(refresh_token);
+    console.log(token)
     const payload = { email: token.email, sub: token.sub }
     return this.GenerateJWT(payload)
   }
