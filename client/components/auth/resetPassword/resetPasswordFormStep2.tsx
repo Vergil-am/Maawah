@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
 import { Loader2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -18,8 +17,6 @@ import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import axios from "axios";
-import { useAtomValue } from "jotai";
-import { UserIdAtom } from "@/lib/Atoms";
 
 const formSchema = z.object({
   code: z.string().length(6, {
@@ -45,9 +42,8 @@ const formSchema = z.object({
     },
   ),
 });
-export default function ResetPasswordFormStep2() {
+export default function ResetPasswordFormStep2({ userId }: { userId: number }) {
   const [isLoading, setIsLoading] = useState(false)
-  const UserId = useAtomValue(UserIdAtom)
   const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,11 +58,11 @@ export default function ResetPasswordFormStep2() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     //TODO: make it send the actual request to the api
     setIsLoading(true)
-    if (UserId) {
+    if (userId) {
       try {
         const res = await axios.put('http://localhost:5000/auth/new-password',
           {
-            userId: UserId,
+            userId: userId,
             code: values.code,
             password: values.password
           }
@@ -79,18 +75,13 @@ export default function ResetPasswordFormStep2() {
 
       } catch (err: any) {
         console.log(err)
-        // if (err.response.data.statusCode == 404) {
-        //   toast({
-        //     title: "user not found ",
-        //     variant: "destructive",
-        //     description: "there is no user with this email address create an account?",
-        //     action: (
-        //       <ToastAction altText="create an account" onClick={() => router.push('/auth/signup')}>signup</ToastAction>
-        //     )
-        //   })
-        //   setIsLoading(false)
+        toast({
+          title: "failed to reset password",
+          variant: 'destructive',
+          description: "please try again",
+        })
+        setIsLoading(false)
 
-        // }
       }
 
     }
