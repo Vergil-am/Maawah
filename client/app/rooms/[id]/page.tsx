@@ -20,12 +20,11 @@ export default async function Room({ params }: { params: { id: string } }) {
         </div>
       </div>
 
-      <div className="w-3/5 m-3 max-lg:w-full rounded-md overflow-hidden">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-          Location{" "}
-        </h2>
-        <MapsView Coordinates={{ lat: Room.lat, lon: Room.lon }} />
-      </div>
+      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+        Location{" "}
+      </h2>
+
+      <MapsView Coordinates={{ lat: Room.lat, lon: Room.lon }} />
     </main>
   );
 }

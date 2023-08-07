@@ -11,8 +11,8 @@ interface params {
 export default function MapsView({ Coordinates }: params) {
   const { lon, lat } = Coordinates;
   return (
-    <div>
-      <Map provider={osm} height={500} defaultCenter={[lat, lon]} defaultZoom={13}>
+    <div className="m-2 rounded-xl lg:w-3/5">
+      <Map provider={osm} height={400} defaultCenter={[lat, lon]} defaultZoom={13}>
         <Marker width={50} anchor={[lon, lat]} />
       </Map>
     </div>);

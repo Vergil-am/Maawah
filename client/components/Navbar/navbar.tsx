@@ -9,7 +9,7 @@ export default function Navbar() {
         <div className="inline-flex">
           <Link className="_o6689fn" href="/">
             <div className="hidden md:block">
-              <h1>RentUp</h1>
+              <h1>Maawah</h1>
             </div>
             <div className="block md:hidden">
               <h1>LOGO</h1>
@@ -19,7 +19,7 @@ export default function Navbar() {
         {/* END LOGO */}
 
         {/*TODO: i need to fix the SearchBox it causes ui hydration error*/}
-        {/* <SearchBox /> */}
+        <SearchBox />
         {/* LOGIN */}
         <div className="flex-initial">
           <div className="flex justify-end items-center relative">

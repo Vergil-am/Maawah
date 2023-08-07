@@ -38,7 +38,7 @@ export default function ReserveCard({ props }: RentalCardProps) {
   }
   return (
     <div className="w-2/5 flex flex-col justify-center items-center max-lg:w-screen mt-2 ">
-      <Card className="max-md:w-full max-lg:w-4/5 lg:fixed lg:w-1/3 xl:w-1/4">
+      <Card className="max-md:w-full max-lg:w-4/5 lg:fixed lg:w-1/3 xl:w-1/4 max-sm:hidden">
         <CardHeader className="flex items-center">
           <CardTitle>{props.title}</CardTitle>
           <CardDescription className='flex '><MapPin size={16} className='mr-2' /> {props.address}</CardDescription>
