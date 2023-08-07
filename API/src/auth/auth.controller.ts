@@ -5,7 +5,8 @@ import { SignupDto } from './dto/signup.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ResendService } from 'src/resend.service';
-import { match } from 'assert';
+import { totp } from 'otplib';
+
 
 @Controller('auth')
 export class AuthController {
@@ -42,16 +43,32 @@ export class AuthController {
   async ResetPassword(@Body('email') email: string) {
     //TODO: fix this temporary
     const user = await this.authService.FindUserByEmail(email)
-    console.log(user)
     if (!user) {
       throw new HttpException("user not found", HttpStatus.NOT_FOUND)
     }
-    return this.Resend.emails.send({
+    totp.options = {
+      step: 900
+    }
+    const OTP = totp.generate(process.env.OTP_SECRET)
+    console.log(OTP)
+    this.Resend.emails.send({
       from: process.env.RESEND_EMAIL,
       to: [email],
       subject: "reset your password",
-      text: 'reset-password'
+      html: `This is your password reset one time code: <strong>${OTP}</strong>`
     })
+    return { userId: user.id }
+  }
+
+  @Put("new-password")
+  async newPassword(@Body() body) {
+    const { userId, password, code } = body
+    const isValid = totp.verify({ token: code, secret: process.env.OTP_SECRET })
+    console.log(isValid)
+    if (!isValid) {
+      throw new HttpException('code expired', HttpStatus.UNAUTHORIZED)
+    }
+    return this.authService.ChangePassword(userId, password)
   }
 
   @Get("refresh")
@@ -75,7 +92,7 @@ export class AuthController {
     if (user) {
       return true
     }
-    return `${process.env.FRONT_END_URL}?${access_token}`
+    return false
 
     // this.authService.sendEmail([email], "confirm your email", access_token)
   }

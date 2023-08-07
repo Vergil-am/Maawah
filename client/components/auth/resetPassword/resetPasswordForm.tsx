@@ -18,8 +18,8 @@ import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import axios from "axios";
-import { useSetAtom } from "jotai";
-import { StepAtom } from "@/lib/Atoms";
+import { useSetAtom, Atom } from "jotai";
+import { StepAtom, UserIdAtom } from "@/lib/Atoms";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -29,6 +29,7 @@ const formSchema = z.object({
 export default function ResetPasswordForm() {
   const [isLoading, setIsLoading] = useState(false)
   const setStep = useSetAtom(StepAtom)
+  const setUserId = useSetAtom(UserIdAtom)
   const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,9 +42,10 @@ export default function ResetPasswordForm() {
 
     setIsLoading(true)
     try {
-      // const res = await axios.put('http://localhost:5000/auth/reset-password',
-      //   { email: values.email }
-      // )
+      const res = await axios.put('http://localhost:5000/auth/reset-password',
+        { email: values.email }
+      )
+      setUserId(res.data.userId)
       toast({
         title: "we sent you an email",
         description: "please check your inbox",

@@ -18,6 +18,8 @@ import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import axios from "axios";
+import { useAtomValue } from "jotai";
+import { UserIdAtom } from "@/lib/Atoms";
 
 const formSchema = z.object({
   code: z.string().length(6, {
@@ -45,6 +47,7 @@ const formSchema = z.object({
 });
 export default function ResetPasswordFormStep2() {
   const [isLoading, setIsLoading] = useState(false)
+  const UserId = useAtomValue(UserIdAtom)
   const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,34 +62,39 @@ export default function ResetPasswordFormStep2() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     //TODO: make it send the actual request to the api
     setIsLoading(true)
-    try {
-      // const res = await axios.put('http://localhost:5000/auth/reset-password',
-      //   {
-      //     code: values.code,
-      //     password: values.password
-      //   }
-      // )
-      toast({
-        title: "password reset",
-        description: "you succesfully reset your passoword",
-      })
-      setIsLoading(false)
+    if (UserId) {
+      try {
+        const res = await axios.put('http://localhost:5000/auth/new-password',
+          {
+            userId: UserId,
+            code: values.code,
+            password: values.password
+          }
+        )
+        toast({
+          title: "password reset",
+          description: "you succesfully reset your passoword",
+        })
+        setIsLoading(false)
 
-    } catch (err: any) {
-      console.log(err)
-      // if (err.response.data.statusCode == 404) {
-      //   toast({
-      //     title: "user not found ",
-      //     variant: "destructive",
-      //     description: "there is no user with this email address create an account?",
-      //     action: (
-      //       <ToastAction altText="create an account" onClick={() => router.push('/auth/signup')}>signup</ToastAction>
-      //     )
-      //   })
-      //   setIsLoading(false)
+      } catch (err: any) {
+        console.log(err)
+        // if (err.response.data.statusCode == 404) {
+        //   toast({
+        //     title: "user not found ",
+        //     variant: "destructive",
+        //     description: "there is no user with this email address create an account?",
+        //     action: (
+        //       <ToastAction altText="create an account" onClick={() => router.push('/auth/signup')}>signup</ToastAction>
+        //     )
+        //   })
+        //   setIsLoading(false)
 
-      // }
+        // }
+      }
+
     }
+
 
   }
   return (

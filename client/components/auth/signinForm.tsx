@@ -20,6 +20,7 @@ import { useAtom } from "jotai";
 import { useToast } from "@/components/ui/use-toast";
 import { isLoggedinAtom } from "@/components/Navbar/ProfileMenu";
 import axios from "axios";
+import Link from "next/link";
 const formSchema = z.object({
   email: z.string().email({
     message: "invalid email adress",
@@ -29,7 +30,7 @@ const formSchema = z.object({
   }),
 });
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function SigninForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -114,6 +115,9 @@ export function SigninForm({ className, ...props }: UserAuthFormProps) {
               </FormItem>
             )}
           />
+          <div className="flex justify-end w-full">
+            <Link href='/auth/reset-password' >Forgot your password?</Link>
+          </div>
           <Button disabled={isLoading} className="mt-2 w-full">
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign In

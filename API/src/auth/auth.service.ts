@@ -69,8 +69,14 @@ export class AuthService {
   }
 
 
-  ResetPassword() {
-    return "Reset password"
+  async ChangePassword(userId: number, password: string) {
+    const Password = await argon2.hash(password)
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: Password }
+    })
+    return user
+
   }
 
   //This function generates an access_token valid for 15min

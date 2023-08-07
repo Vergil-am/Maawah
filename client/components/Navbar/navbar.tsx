@@ -17,7 +17,9 @@ export default function Navbar() {
           </Link>
         </div>
         {/* END LOGO */}
-        <SearchBox />
+
+        {/*TODO: i need to fix the SearchBox it causes ui hydration error*/}
+        {/* <SearchBox /> */}
         {/* LOGIN */}
         <div className="flex-initial">
           <div className="flex justify-end items-center relative">
