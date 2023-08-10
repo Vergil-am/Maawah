@@ -8,8 +8,7 @@ import {
 } from "@/components/ui/card";
 import { RentalCardProps } from "@/interfaces/CardProps";
 import { Separator } from "./ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AirVent, Bed, LucideUser, MapPin, Tv2, Waves, Wifi } from "lucide-react";
+import { AirVent, Bed, MapPin, Tv2, Waves, Wifi } from "lucide-react";
 import AddToWishlistButton from "./AddToWishlistButton";
 import Link from "next/link";
 

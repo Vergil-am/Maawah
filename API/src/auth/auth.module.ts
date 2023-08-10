@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './LocalLoginStrategy';
 import { JwtStrategy } from './JwtStrategy';
 import { ResendService } from 'src/resend.service';
+import { OTPservice } from './otp.service';
 @Module({
   imports: [
     PassportModule,
@@ -16,6 +17,6 @@ import { ResendService } from 'src/resend.service';
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy, ResendService]
+  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy, ResendService, OTPservice]
 })
 export class AuthModule { }

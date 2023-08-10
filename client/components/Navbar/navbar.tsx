@@ -5,11 +5,11 @@ export default function Navbar() {
   return (
     <>
       {/* LOGO */}
-      <nav className="top-0 z-50 bg-primary-foreground text-primary w-full flex justify-between items-center  px-8 h-20 border-b fixed">
+      <nav className="top-0 z-50 bg-primary-foreground  w-full flex justify-between items-center  px-8 h-20 border-b fixed">
         <div className="inline-flex">
           <Link className="_o6689fn" href="/">
             <div className="hidden md:block">
-              <h1>Maawah</h1>
+              <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl" >Maawah</h1>
             </div>
             <div className="block md:hidden">
               <h1>LOGO</h1>
@@ -29,7 +29,9 @@ export default function Navbar() {
                 href="/host"
               >
                 <div className="flex items-center relative cursor-pointer whitespace-nowrap">
-                  Rent your home
+                  <p className="leading-7 [&:not(:first-child)]:mt-6" >
+                    Rent your home
+                  </p>
                 </div>
               </Link>
               <div className="max-sm:hidden block relative">

@@ -1,29 +1,31 @@
 "use client"
-import { use } from "react";
 import { MakeRequest } from "@/lib/fetcher";
-import { useAtomValue } from "jotai";
+import { atom, useAtom, useSetAtom } from "jotai";
+import { loadable } from 'jotai/utils'
 import { isLoggedinAtom } from "@/components/Navbar/ProfileMenu";
 import wishlist from "@/interfaces/wishlist";
 import { toast } from "@/components/ui/use-toast";
 import RoomCard from "@/components/card"
+
+
 const optionsForFetch = {
   method: "get",
   withCredentials: true,
 };
-const getWishlist = MakeRequest("http://localhost:5000/wishlist", optionsForFetch)
-  .then((res) => res)
-  .catch((err) => console.log(err));
-
-
+const responseAtom = atom(null)
+const WishlistAtom = atom(null, async (get, set) => {
+  const res = await MakeRequest("http://localhost:5000/wishlist", optionsForFetch)
+  set(responseAtom, res)
+})
+const loadableAtom = loadable<Promise<wishlist[]> | null>(responseAtom)
 
 export default function Wishlist() {
-  const isLoggedin = useAtomValue(isLoggedinAtom);
-  if (!isLoggedin) {
-    return (
-      null
-    )
-  }
-  const wishlist = use(getWishlist);
+  const [wishlist] = useAtom(loadableAtom)
+  const [, refreshData] = useAtom(WishlistAtom)
+  // refreshData()
+  //TODO: I need to redirect if user is not loggedin
+  // const isLoggedin = useAtomValue(isLoggedinAtom);
+
 
   async function HandleDelete(item: wishlist) {
     //TODO: I need to add a button to remove from wishlist
@@ -37,7 +39,6 @@ export default function Wishlist() {
         title: `${item.room.title}`,
         description: "removed from wishlist",
       });
-
     } catch (err: any) {
       toast({
         variant: "destructive",
@@ -48,20 +49,18 @@ export default function Wishlist() {
 
 
   }
+
   return (
-
     <main className="flex flex-wrap justify-start mx-2">
+      {wishlist.state == 'loading' ? <div>Loading ... </div>
+        : wishlist.state == 'hasError' ? <div>Sorry an error has occured</div>
+          : <div>{wishlist.data != null && wishlist.data.map((item) => {
+            return <>
+              <RoomCard key={item.id} props={item.room} />
+            </>
+          })}</div>}
 
-      {wishlist ? (
-        wishlist.length < 1 ? <div>your wishlist is empty</div> :
-          wishlist.map((item: wishlist) => {
-            return (
-              <RoomCard props={item.room} key={item.room.id} />
-            );
-          })
-      ) : (
-        <div>Loading ...</div>
-      )}
     </main>
   )
+
 }

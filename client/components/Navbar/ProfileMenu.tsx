@@ -47,7 +47,7 @@ export default function ProfileMenu() {
           </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="w-56 ">
         {isLoggedin ? (
           <>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
