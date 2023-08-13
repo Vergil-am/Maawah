@@ -15,7 +15,6 @@ export class ReservationController {
     , @Body() createReservationDto: CreateReservationDto) {
     createReservationDto.roomId = Number(roomId)
     createReservationDto.userId = req.user.UserId
-    console.log(createReservationDto)
     return this.reservationService.create(createReservationDto);
   }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Resend } from 'resend';
+import { OTPservice } from './auth/otp.service';
 
 @Injectable()
 export class ResendService extends Resend {
@@ -61,7 +62,21 @@ Ignore this email if you did not request this code.`
     })
   }
 
-  sendReservationConfirmationEmail(Target: string) {
+  async sendReservationConfirmationEmail(Options: {
+    Target: string,
+    roomTitle: string,
+    from: Date,
+    to: Date,
+  }) {
+
+    const { Target } = Options
+    await this.emails.send({
+      from: process.env.RESEND_EMAIL,
+      to: Target,
+      subject: 'confirm your reservation',
+      text: `your reservation for ${Options.roomTitle} has been set from: ${Options.from}, to: ${Options.to} and it's awaiting review`
+    })
+
 
   }
 
