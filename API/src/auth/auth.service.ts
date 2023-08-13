@@ -6,40 +6,21 @@ import * as argon2 from "argon2"
 import { ResendService } from 'src/resend.service';
 import { Emails } from 'resend/build/src/emails/emails';
 import { CreateEmailOptions } from 'resend/build/src/emails/interfaces';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from 'src/users/users.service';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService,
     private resend: ResendService,
-    private jwtService: JwtService) { }
+    private jwtService: JwtService,
+    private users: UsersService
+  ) { }
 
-  async Signup(SignupDto: SignupDto) {
-    try {
-      SignupDto.password = await argon2.hash(SignupDto.password)
-      const user = await this.prisma.user.create({
-        data: SignupDto
-      })
-      return user
-
-    } catch (error) {
-      console.log()
-      if (error.code == 'P2002' && error.meta.target.includes('email')) {
-        throw new HttpException({
-          status: HttpStatus.CONFLICT,
-          error: "user with this email already exists"
-        }, HttpStatus.CONFLICT)
-
-      } else {
-        throw new HttpException({
-          status: HttpStatus.BAD_REQUEST,
-          error: "couldn't create user"
-        }, HttpStatus.BAD_REQUEST)
-      }
-
-
-    }
-
-
+  async Signup(CreateUserDto: CreateUserDto) {
+    CreateUserDto.password = await argon2.hash(CreateUserDto.password)
+    return await this.users.create(CreateUserDto)
   }
 
   async sendEmail(EmailOptions: CreateEmailOptions) {
@@ -69,12 +50,9 @@ export class AuthService {
   }
 
 
-  async ChangePassword(userId: number, password: string) {
-    const Password = await argon2.hash(password)
-    const user = await this.prisma.user.update({
-      where: { id: userId },
-      data: { password: Password }
-    })
+  async ChangePassword(UpdateUserDto: UpdateUserDto) {
+    UpdateUserDto.password = await argon2.hash(UpdateUserDto.password)
+    const user = await this.users.update(UpdateUserDto)
     return user
 
   }

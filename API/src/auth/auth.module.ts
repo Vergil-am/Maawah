@@ -8,6 +8,7 @@ import { LocalStrategy } from './LocalLoginStrategy';
 import { JwtStrategy } from './JwtStrategy';
 import { ResendService } from 'src/resend.service';
 import { OTPservice } from './otp.service';
+import { UsersService } from 'src/users/users.service';
 @Module({
   imports: [
     PassportModule,
@@ -17,6 +18,6 @@ import { OTPservice } from './otp.service';
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy, ResendService, OTPservice]
+  providers: [AuthService, PrismaService, UsersService, LocalStrategy, JwtStrategy, ResendService, OTPservice]
 })
 export class AuthModule { }

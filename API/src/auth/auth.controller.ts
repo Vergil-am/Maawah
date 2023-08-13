@@ -1,23 +1,42 @@
 import { Controller, Post, Body, Request, Res, Put, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
-import { SignupDto } from './dto/signup.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ResendService } from 'src/resend.service';
 import { OTPservice } from './otp.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from 'src/users/users.service';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password-dto';
 
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService,
-    private readonly Resend: ResendService,
-    private readonly OTP: OTPservice
+    private Resend: ResendService,
+    private readonly OTP: OTPservice,
+    private users: UsersService
   ) { }
 
   @Post("signup")
-  Signup(@Body() SignupDto: SignupDto) {
-    return this.authService.Signup(SignupDto);
+  Signup(@Body() CreateUserDto: CreateUserDto) {
+    try {
+      return this.authService.Signup(CreateUserDto);
+    } catch (error) {
+      if (error.code == 'P2002' && error.meta.target.includes('email')) {
+        throw new HttpException({
+          status: HttpStatus.CONFLICT,
+          error: "user with this email already exists"
+        }, HttpStatus.CONFLICT)
+
+      } else {
+        throw new HttpException({
+          status: HttpStatus.BAD_REQUEST,
+          error: "couldn't create user"
+        }, HttpStatus.BAD_REQUEST)
+      }
+    }
   }
 
 
@@ -41,31 +60,25 @@ export class AuthController {
 
   @Put("reset-password")
   async ResetPassword(@Body('email') email: string) {
-    const user = await this.authService.FindUserByEmail(email)
+    const user = await this.users.findOneByEmail(email)
     if (!user) {
       throw new HttpException("user not found", HttpStatus.NOT_FOUND)
     }
 
     const OTP = this.OTP.GenerateOTP()
-    console.log(OTP)
-    this.Resend.emails.send({
-      from: process.env.RESEND_EMAIL,
-      to: [email],
-      subject: "reset your password",
-      html: `This is your password reset one time code: <strong>${OTP}</strong>`
-    })
+    this.Resend.sendResetPasswordEmail(email, OTP)
     return { userId: user.id }
   }
 
   @Put("new-password")
-  async newPassword(@Body() body) {
-    const { userId, password, code } = body
-    const isValid = this.OTP.VerifyOTP(code)
-    console.log(isValid)
+  async newPassword(@Body() ChangePasswordDto: ChangePasswordDto) {
+    //WARN: idk there might be an error here have to test it
+    const isValid = this.OTP.VerifyOTP(ChangePasswordDto.code)
     if (!isValid) {
       throw new HttpException('code expired', HttpStatus.UNAUTHORIZED)
     }
-    return this.authService.ChangePassword(userId, password)
+    const UpdateUserDto: UpdateUserDto = ChangePasswordDto
+    return this.authService.ChangePassword(UpdateUserDto)
   }
 
   @Get("refresh")
@@ -83,7 +96,7 @@ export class AuthController {
 
   @Post("check")
   async Check(@Body('email') email: string) {
-    const user = await this.authService.FindUserByEmail(email)
+    const user = await this.users.findOneByEmail(email)
     if (user) {
       return true
     }
@@ -93,19 +106,13 @@ export class AuthController {
 
   @Post('confirm-email')
   async ConfirmEmail(@Body('email') email: string) {
-    //TODO: I need to send an OTP code and then validate it to confirm email
-    const user = await this.authService.FindUserByEmail(email)
+    //TODO: I need to validate the otp
+    const user = await this.users.findOneByEmail(email)
     if (user) {
       throw new HttpException("User with this email already exists", HttpStatus.CONFLICT)
     }
     const OTP = this.OTP.GenerateOTP()
-    console.log(OTP)
-    this.Resend.emails.send({
-      from: process.env.RESEND_EMAIL,
-      to: [email],
-      subject: "Confirm your email",
-      html: `This is your email confimation one time code: <strong>${OTP}</strong>`
-    })
+    this.Resend.sendConfirmationEmail(email, OTP)
     return "email sent successfully"
   }
 
