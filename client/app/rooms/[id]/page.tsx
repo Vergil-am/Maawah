@@ -2,6 +2,7 @@ import axios from "axios";
 import { ImageCarousel } from "@/components/rooms/image-carousel";
 import MapsView from "@/components/rooms/mapView";
 import ReserveCard from "@/components/rooms/reserveCard";
+
 export default async function Room({ params }: { params: { id: string } }) {
   const res = await axios.get(`http://localhost:5000/rooms/${params.id}`);
   const Room = res.data;
@@ -24,7 +25,7 @@ export default async function Room({ params }: { params: { id: string } }) {
         Location{" "}
       </h2>
 
-      <MapsView Coordinates={{ lat: Room.lat, lon: Room.lon }} />
+      <MapsView lat={Number(Room.lat)} lon={Number(Room.lon)} />
     </main>
   );
 }

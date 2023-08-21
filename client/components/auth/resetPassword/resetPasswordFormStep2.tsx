@@ -56,13 +56,11 @@ export default function ResetPasswordFormStep2({ userId }: { userId: number }) {
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    //TODO: make it send the actual request to the api
     setIsLoading(true)
     if (userId) {
       try {
-        const res = await axios.put('http://localhost:5000/auth/new-password',
+        const res = await axios.put(`http://localhost:5000/auth/new-password/${userId}`,
           {
-            userId: userId,
             code: values.code,
             password: values.password
           }

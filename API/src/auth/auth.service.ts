@@ -50,9 +50,9 @@ export class AuthService {
   }
 
 
-  async ChangePassword(UpdateUserDto: UpdateUserDto) {
+  async ChangePassword(userId: number, UpdateUserDto: UpdateUserDto) {
     UpdateUserDto.password = await argon2.hash(UpdateUserDto.password)
-    const user = await this.users.update(UpdateUserDto)
+    const user = await this.users.update(userId, UpdateUserDto)
     return user
 
   }

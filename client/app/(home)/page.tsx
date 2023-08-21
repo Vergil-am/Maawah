@@ -2,7 +2,6 @@ import axios from "axios";
 import room from "@/interfaces/room";
 import RoomCard from "@/components/card";
 import CategoryList from "@/components/CategoryList";
-import AddToWishlistButton from "@/components/AddToWishlistButton";
 
 export default async function Home({
   params,

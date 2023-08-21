@@ -19,7 +19,7 @@ export default function Navbar() {
         {/* END LOGO */}
 
         {/*TODO: i need to fix the SearchBox it causes ui hydration error*/}
-        <SearchBox />
+        {/* <SearchBox /> */}
         {/* LOGIN */}
         <div className="flex-initial">
           <div className="flex justify-end items-center relative">
@@ -30,7 +30,7 @@ export default function Navbar() {
               >
                 <div className="flex items-center relative cursor-pointer whitespace-nowrap">
                   <p className="leading-7 [&:not(:first-child)]:mt-6" >
-                    Rent your home
+                    Switch to Hosting
                   </p>
                 </div>
               </Link>

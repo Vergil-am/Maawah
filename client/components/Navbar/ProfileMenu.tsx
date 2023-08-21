@@ -36,12 +36,12 @@ export default function ProfileMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="link" className="rounded-full">
+        <Button variant="link" className="rounded-full text-foreground hover:text-gray-700">
           <div className="flex items-center">
             <Menu />
             <Avatar className="h-6 w-6 ml-2">
               <AvatarFallback>
-                <LucideUser className="fill-secondary stroke-primary" />
+                <LucideUser />
               </AvatarFallback>
             </Avatar>
           </div>

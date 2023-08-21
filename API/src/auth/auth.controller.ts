@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Request, Res, Put, Get, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Request, Res, Put, Get, HttpException, HttpStatus, Param } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { UseGuards } from '@nestjs/common';
@@ -70,15 +70,15 @@ export class AuthController {
     return { userId: user.id }
   }
 
-  @Put("new-password")
-  async newPassword(@Body() ChangePasswordDto: ChangePasswordDto) {
+  @Put("new-password/userId")
+  async newPassword(@Param('userId') userId: number, @Body() ChangePasswordDto: ChangePasswordDto) {
     //WARN: idk there might be an error here have to test it
     const isValid = this.OTP.VerifyOTP(ChangePasswordDto.code)
     if (!isValid) {
       throw new HttpException('code expired', HttpStatus.UNAUTHORIZED)
     }
-    const UpdateUserDto: UpdateUserDto = ChangePasswordDto
-    return this.authService.ChangePassword(UpdateUserDto)
+    const updateUserDto: UpdateUserDto = ChangePasswordDto
+    return this.authService.ChangePassword(userId, updateUserDto)
   }
 
   @Get("refresh")
