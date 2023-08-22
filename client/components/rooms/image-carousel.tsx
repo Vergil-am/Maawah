@@ -9,6 +9,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 // import { Icons } from "@/components/icons";
 
+//TODO: I need to use Image instead of img here
 interface ImageCarouselProps
   extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   images: { name: string; url: string }[];
@@ -47,7 +48,7 @@ export function ImageCarousel({ images, className, ...props }: ImageCarouselProp
               }
               // alt={images[currentImage]?.name ?? "Carousel image"}
               // fill
-              className="object-cover"
+              className="object-cover rounded-md"
               alt={images[currentImage].name}
             />
           </AspectRatio>

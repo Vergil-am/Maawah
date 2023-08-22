@@ -2,13 +2,15 @@ import axios from "axios";
 import { ImageCarousel } from "@/components/rooms/image-carousel";
 import MapsView from "@/components/rooms/mapView";
 import ReserveCard from "@/components/rooms/reserveCard";
+import PageHeader from "@/components/HostPageHeader";
 
 export default async function Room({ params }: { params: { id: string } }) {
   const res = await axios.get(`http://localhost:5000/rooms/${params.id}`);
   const Room = res.data;
   return (
-    <main>
-      <div className="w-screen flex max-lg:flex-wrap">
+    <main className="lg:container">
+      <PageHeader title={Room.title} description={Room.address} className="max-lg:hidden" />
+      <div className="w-full flex max-lg:flex-wrap">
         <div className="w-3/5 max-lg:w-screen m-2 max-lg:m-0">
           <ImageCarousel images={Room.images} />
         </div>
