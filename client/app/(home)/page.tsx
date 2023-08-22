@@ -39,11 +39,13 @@ export default async function Home({
     );
   }
   return (
-    <main className="flex flex-wrap justify-start mx-2">
+    <>
       <CategoryList />
-      {Rooms.map((room: room) => {
-        return <RoomCard props={room} key={room.id} />;
-      })}
-    </main>
+      <main className="flex flex-wrap justify-start mx-2 max-sm:mx-0 container">
+        {Rooms.map((room: room) => {
+          return <RoomCard props={room} key={room.id} />;
+        })}
+      </main>
+    </>
   );
 }

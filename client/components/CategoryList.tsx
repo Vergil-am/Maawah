@@ -40,7 +40,7 @@ const Categories = [
 export default function CategoryList() {
   return (
     <TooltipProvider>
-      <div className="w-screen border-b bg-primary-foreground overflow-scroll">
+      <div className="w-screen border-b bg-primary-foreground overflow-hidden overflow-x-scroll">
         <ul className="flex text-muted-foreground ">
           {Categories.map((cat) => {
             return (

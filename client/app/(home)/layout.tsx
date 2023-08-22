@@ -12,7 +12,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <Navbar />
-      <div className="mt-20 container">{children}</div>
+      <div className="mt-20">{children}</div>
     </>
   );
 }
