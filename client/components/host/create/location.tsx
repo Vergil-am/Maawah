@@ -17,23 +17,32 @@ const SelectItems = [
     name: 'alger',
     lon: 36.7597828,
     lat: 3.0541533,
+  },
+  {
+    name: "oran",
+    lon: 35.7217,
+    lat: -0.6853
   }
 ]
 
 export default function Location() {
-  const [anchor, setAnchor] = useState([36.328, 2.609]);
-  console.log(anchor)
+  const [anchor, setAnchor] = useState<number[] | undefined>([36.328, 2.609]);
   return (
-    <main className="container">
-      <Select>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select a fruit" />
+    <div className="w-full h-full flex flex-col gap-4 justify-center items-center">
+      <Select onValueChange={(value) => {
+        const item = SelectItems.find((item) => {
+          return item.name === value;
+        })
+        setAnchor([item?.lon, item?.lat])
+      }}>
+        <SelectTrigger className="w-[500px]">
+          <SelectValue placeholder="Select Wilaya" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Fruits</SelectLabel>
+            <SelectLabel>Wilayas</SelectLabel>
             {SelectItems.map(item => (
-              <SelectItem value={item.name} onSelect={() => setAnchor([item.lon, item.lat])}>{item.name}</SelectItem>
+              <SelectItem value={item.name} >{item.name}</SelectItem>
             ))}
           </SelectGroup>
         </SelectContent>
@@ -53,6 +62,6 @@ export default function Location() {
         </Draggable>
       </Map>
 
-    </main>
+    </div>
   )
 }
