@@ -51,7 +51,7 @@ export default function HostNavbar() {
           <span className="sr-only">View notifications</span>
           <BellIcon className="h-6 w-6" aria-hidden="true" />
         </button>
-        <ProfileMenu />
+        {/* <ProfileMenu /> */}
       </div>
     </nav>
   )

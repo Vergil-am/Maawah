@@ -16,10 +16,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={fontSans.className}>
       <body className="h-screen  bg-background overflow-x-hidden">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        {/* <ThemeProvider attribute="class" defaultTheme="light" enableSystem> */}
+        {children}
+        <Toaster />
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );
