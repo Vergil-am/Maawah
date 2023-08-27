@@ -1,9 +1,8 @@
 "use client"
 import { BedSingle, BedDouble, Waves, Hotel, Warehouse, Ship, Building2, Home } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
-import { useState } from "react";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { useAtom } from "jotai";
+import { CreateListingAtom } from "./footer";
 const Categories = [
   {
     name: "single",
@@ -38,19 +37,20 @@ const Categories = [
     icon: <Home />,
   },
 ];
-//TODO: make it return the chosen category 
-//NOTE:  i'm thinking of making it in the query params? 
 export default function SelectCategory() {
-  const [SelectedCategory, setSeletedCategory] = useState<string | null>(null)
+  const [Listing, setListing] = useAtom(CreateListingAtom)
   function onCategorySelect(category: string) {
-    setSeletedCategory(category)
+    setListing({
+      ...Listing,
+      type: category
+    })
   }
   return (
     <>
       <div className="grid grid-cols-2 mt-8 gap-2">
         {Categories.map(category => (
           <Toggle
-            pressed={SelectedCategory === category.name}
+            pressed={Listing.type === category.name}
             onPressedChange={() => onCategorySelect(category.name)}
             key={category.name} variant='outline' className="flex flex-col h-20">
             {category.icon}

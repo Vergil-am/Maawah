@@ -33,6 +33,7 @@ export default function ProfileMenu() {
     deleteCookie("access_token");
     setisLoggedin(false);
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

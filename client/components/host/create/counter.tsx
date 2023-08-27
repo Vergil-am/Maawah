@@ -24,8 +24,7 @@ export default function Counter({
     setValue(Value - 1)
   }
   return (
-    <>
-
+    <div className="w-2/4">
       <Separator className="my-2" />
       <div className="flex items-center justify-between">
         <div className="flex-1">{title}</div>
@@ -36,6 +35,6 @@ export default function Counter({
         </div>
       </div>
       <Separator className="my-2" />
-    </>
+    </div>
   )
 }

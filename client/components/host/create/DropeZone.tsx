@@ -7,23 +7,28 @@ import { ImageMinusIcon, ImagePlus } from 'lucide-react'
 import React, { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Image from 'next/image'
+import { CreateListingAtom } from './footer'
 
-export const ImagesAtom = atom<string[]>([])
 
 export default function DropeZone() {
-  const [Images, setImages] = useAtom(ImagesAtom)
+  const [Listing, setListing] = useAtom(CreateListingAtom)
   const { toast } = useToast()
   const onDrop = useCallback((acceptedFiles: any, rejectedFiles: any) => {
     acceptedFiles.forEach((file: any) => {
       const reader = new FileReader()
       reader.onload = () => {
-        setImages((state: string[]) => [...state, reader.result as string])
+        setListing(
+          (previousState) => (
+            {
+              ...previousState,
+              images: [...previousState.images, reader.result as string]
+            }
+          ))
       }
       reader.readAsDataURL(file)
     });
 
     if (rejectedFiles.length > 0) {
-      console.log()
       toast({
         title: rejectedFiles[0].errors[0].code,
         description: rejectedFiles[0].errors[0].message.split('/')[0],
@@ -33,6 +38,7 @@ export default function DropeZone() {
 
 
   }, [])
+
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: { 'image/*': [] } })
   return (
@@ -55,15 +61,16 @@ export default function DropeZone() {
 
       </section>
       {
-        Images.length > 0 &&
+        Listing.images.length > 0 &&
         <section className='flex gap-4 flex-wrap justify-center p-6'>
-          {Images.map((image: string, index: number) => {
+          {Listing.images.map((image: string, index: number) => {
             return (
               <div className='w-[500px] h-[300px] rounded-lg relative' key={index}>
                 <Button
-                  onClick={() => setImages(
-                    Images.filter((item: string, i: number) => i != index)
-                  )}
+                  //TODO: i need to fix this later
+                  // onClick={() => setImages(
+                  //   Images.filter((item: string, i: number) => i != index)
+                  // )}
                   variant='secondary'
                   className='absolute right-2 top-2 rounded-full' ><ImageMinusIcon /></Button>
                 <Image

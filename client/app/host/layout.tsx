@@ -8,7 +8,7 @@ export default function HostLayout({ children }: HostLayoutProps) {
   return (
     <>
       <HostNavbar />
-      <main className="container">{children}</main>
+      <main className="container relative">{children}</main>
     </>
   )
 }

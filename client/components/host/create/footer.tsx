@@ -1,16 +1,100 @@
+'use client'
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/components/ui/use-toast";
+import { atom, useAtom, useAtomValue } from "jotai";
+import { useRouter } from "next/navigation";
 
-type FooterProps = {
-  children: React.ReactNode,
-  progress: number
+type footerProps = {
+  step: string
 }
-export default function Footer({ children, progress }: FooterProps) {
+type CreateListingType = {
+  title?: string,
+  description?: string,
+  type?: string,
+  bedrooms: number,
+  bathrooms: number,
+  garages: number,
+  images: string[],
+  address?: string,
+  lon?: number,
+  lat?: number,
+}
+const Steps = ['create', 'type', 'details', 'description', 'location', 'images']
+export const CreateListingAtom = atom<CreateListingType>({
+  bedrooms: 1,
+  bathrooms: 1,
+  garages: 0,
+  images: []
+})
+
+export default function Footer({ step }: footerProps) {
+  const Listing = useAtomValue(CreateListingAtom)
+  console.log(Listing)
+  const { toast } = useToast()
+  const router = useRouter()
+  const index = Steps.indexOf(step)
+  function handleBack() {
+    if (index > 0) {
+      router.push(Steps[index - 1])
+    }
+
+  }
+  function handleNext() {
+    if (index == 1) {
+      if (Listing.type) {
+        router.push(Steps[index + 1])
+      }
+      else (
+        toast({
+          title: 'you need to choose one before moving forward',
+        })
+      )
+    }
+    else if (index == 3) {
+      if (Listing.title && Listing.description) {
+        router.push(Steps[index + 1])
+      }
+      else {
+        toast({
+          title: 'title and description cannot be empty'
+        })
+      }
+    }
+    else if (index == 5) {
+      if (Listing.images.length > 0) {
+        //TODO: I need to send the request to the server or go to the next step
+        console.log("Listing submitted successfully")
+      }
+      else {
+        toast({
+          title: 'you need to add images'
+        })
+      }
+    }
+    else {
+      router.push(Steps[index + 1])
+    }
+
+
+  }
+  //TODO: create buttons that use Step[+1] when pressed and Step[-1] or Links
   return (
-    <>
-      <Progress value={progress} />
-      <div className='h-[10vh] w-full flex relative'>
-        {children}
+    <div className="fixed w-screen left-0 bottom-0 bg-primary-foreground">
+      <div className="w-[80%] mx-[10%]">
+        <Progress value={index / (Steps.length - 1) * 100} className="my-4" />
+        <div className='mb-2 w-full flex relative justify-between'>
+          <Button variant='link'
+            disabled={index == 0}
+            onClick={handleBack}
+          >Back</Button>
+          <Button
+            onClick={handleNext}
+          >{
+              index == 0 ? 'Start' : index == Steps.length - 1 ? 'Finish' : 'Next'
+            }</Button>
+        </div>
       </div>
-    </>
+    </div>
   )
 }
