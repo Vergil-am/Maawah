@@ -1,54 +1,40 @@
 "use client"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { MapPin } from "lucide-react";
-import { Draggable, Map, Marker } from "pigeon-maps"
-import { osm } from "pigeon-maps/providers";
+import axios from "axios";
+import { useAtom } from "jotai";
+import { Draggable, Map, ZoomControl } from "pigeon-maps"
+import { maptiler } from "pigeon-maps/providers";
 import { useState } from "react";
-const SelectItems = [
-  {
-    name: 'alger',
-    lon: 36.7597828,
-    lat: 3.0541533,
-  },
-  {
-    name: "oran",
-    lon: 35.7217,
-    lat: -0.6853
-  }
-]
+import { CreateListingAtom } from "./footer";
 
+const ApiKey = 'A87e1nbSlZntcjt20YZw'
 export default function Location() {
-  const [anchor, setAnchor] = useState<number[] | undefined>([36.328, 2.609]);
+  const [anchor, setAnchor] = useState<number[]>([36.328, 2.609]);
+  const [Listing, setListing] = useAtom(CreateListingAtom)
+
+  async function SetLocation(latLng: number[]) {
+    setAnchor(latLng)
+    try {
+      const res = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${latLng[0]}&lon=${latLng[1]}&format=json&accept-language=fr`)
+      setListing({
+        ...Listing,
+        address: res.data.display_name,
+        lat: latLng[0],
+        lon: latLng[1]
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <div className="w-full h-full flex flex-col gap-4 justify-center items-center">
-      <Select onValueChange={(value) => {
-        const item = SelectItems.find((item) => {
-          return item.name === value;
-        })
-        setAnchor([item?.lon, item?.lat])
-      }}>
-        <SelectTrigger className="w-[500px]">
-          <SelectValue placeholder="Select Wilaya" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Wilayas</SelectLabel>
-            {SelectItems.map(item => (
-              <SelectItem value={item.name} >{item.name}</SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <Map height={500} width={500} provider={osm} zoom={6} center={[36.328, 2.609]}>
-        <Draggable offset={[6, 6]} anchor={[anchor[0], anchor[1]]} onDragEnd={setAnchor} >
+      <Map height={500} width={500}
+        provider={maptiler(ApiKey, 'streets')}
+        zoom={6}
+        center={[36.328, 2.609]}
+        onClick={async (e) => SetLocation(e.latLng)}
+      >
+        <ZoomControl />
+        <Draggable offset={[6, 6]} anchor={[anchor[0], anchor[1]]} onDragEnd={SetLocation} >
           <div
             className="w-12 h-12 bg-rose-400 grid place-items-center rounded-full"
           >

@@ -16,7 +16,9 @@ export default function Description() {
         <CardContent >
           <div>
             <Label>Title</Label>
-            <Input className="w-full"
+            <Input
+              placeholder="test title"
+              className="w-full"
               onChange={(e) => {
                 e.preventDefault;
                 setListing({
@@ -27,12 +29,28 @@ export default function Description() {
           </div>
           <div>
             <Label>Description</Label>
-            <Textarea className="h-full w-full"
+            <Textarea
+              className="h-full w-full"
+              placeholder="Describe your place ..."
               onChange={(e) => {
                 e.preventDefault;
                 setListing({
                   ...Listing,
                   description: e.target.value
+                })
+              }}
+            />
+          </div>
+          <div>
+            <Label>Price</Label>
+            <Input
+              placeholder="1000"
+              type="number"
+              onChange={(e) => {
+                e.preventDefault;
+                setListing({
+                  ...Listing,
+                  price: Number(e.target.value)
                 })
               }}
             />

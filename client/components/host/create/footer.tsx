@@ -2,7 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
-import { atom, useAtom, useAtomValue } from "jotai";
+import { MakeRequest } from "@/lib/fetcher";
+import { atom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
 
 type footerProps = {
@@ -12,6 +13,7 @@ type CreateListingType = {
   title?: string,
   description?: string,
   type?: string,
+  price?: number,
   bedrooms: number,
   bathrooms: number,
   garages: number,
@@ -40,7 +42,7 @@ export default function Footer({ step }: footerProps) {
     }
 
   }
-  function handleNext() {
+  async function handleNext() {
     if (index == 1) {
       if (Listing.type) {
         router.push(Steps[index + 1])
@@ -61,10 +63,32 @@ export default function Footer({ step }: footerProps) {
         })
       }
     }
-    else if (index == 5) {
+    else if (index == 4) {
+      if (Listing.address && Listing.lat && Listing.lon) {
+        router.push(Steps[index + 1])
+      } else {
+        toast({
+          title: 'you need to choose a location'
+        })
+
+      }
+    }
+    else if (index == Steps.length - 1) {
       if (Listing.images.length > 0) {
-        //TODO: I need to send the request to the server or go to the next step
-        console.log("Listing submitted successfully")
+        //TODO: I need to send the request to the server or go to the next Steps
+        try {
+          const options = {
+            method: "post",
+            withCredentials: true,
+            data: Listing
+          };
+          const res = await MakeRequest('http://localhost:5000/rooms', options)
+          console.log(res)
+          console.log('success')
+        } catch (error) {
+          console.log(error)
+
+        }
       }
       else {
         toast({

@@ -12,10 +12,12 @@ export class RoomsController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   async create(@Request() req,
-    @Body() createRoomDto: CreateRoomDto) {
-    createRoomDto.ownerId = req.user.UserId
-    console.log(createRoomDto)
-    return await this.roomsService.create(createRoomDto)
+    @Body() body) {
+    console.log(body)
+    console.log(req.body)
+    // createRoomDto.ownerId = req.user.UserId
+    // console.log(createRoomDto)
+    // return await this.roomsService.create(createRoomDto)
     // I need to set UnavailableDates
 
   }
