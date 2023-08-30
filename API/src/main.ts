@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
+import { json } from 'express';
 
 
 async function bootstrap() {
@@ -9,6 +10,7 @@ async function bootstrap() {
     origin: 'http://localhost:3000',
     credentials: true,
   })
+  app.use(json({ limit: '50mb' }))
   app.use(cookieParser());
 
   await app.listen(5000);

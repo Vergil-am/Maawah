@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 import { MakeRequest } from "@/lib/fetcher";
+import axios from "axios";
 import { atom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
+import { forwardRef } from "react";
 
 type footerProps = {
   step: string
@@ -76,7 +78,22 @@ export default function Footer({ step }: footerProps) {
     else if (index == Steps.length - 1) {
       if (Listing.images.length > 0) {
         //TODO: I need to send the request to the server or go to the next Steps
+        const Urls: string[] = []
         try {
+          Listing.images.forEach(async (image) => {
+            try {
+              const res = await axios.post('https://api.cloudinary.com/v1_1/dx2ldo3wn/upload', {
+                file: image,
+                upload_preset: 'gcitu95h'
+              })
+              Urls.push(res.data.url)
+              Listing.images = Urls
+              console.log(Listing)
+            } catch (err) {
+              console.log(err)
+            }
+
+          });
           const options = {
             method: "post",
             withCredentials: true,
@@ -84,7 +101,6 @@ export default function Footer({ step }: footerProps) {
           };
           const res = await MakeRequest('http://localhost:5000/rooms', options)
           console.log(res)
-          console.log('success')
         } catch (error) {
           console.log(error)
 

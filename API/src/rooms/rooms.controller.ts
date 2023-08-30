@@ -1,26 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { RoomWithDatesDto } from './dto/create-room-with-dates.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('rooms')
 export class RoomsController {
-  constructor(private readonly roomsService: RoomsService) { }
+  constructor(private readonly roomsService: RoomsService,
+  ) { }
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async create(@Request() req,
-    @Body() body) {
-    console.log(body)
-    console.log(req.body)
-    // createRoomDto.ownerId = req.user.UserId
+  async create(
+    @Request() req,
+    @Body() createRoomDto: CreateRoomDto
+  ) {
+    createRoomDto.ownerId = req.user.UserId
     // console.log(createRoomDto)
-    // return await this.roomsService.create(createRoomDto)
+    return await this.roomsService.create(createRoomDto)
     // I need to set UnavailableDates
 
   }
+
+
 
   @Get()
   findAll(
@@ -28,6 +30,7 @@ export class RoomsController {
   ) {
     return this.roomsService.findAll(queries);
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -43,4 +46,6 @@ export class RoomsController {
   remove(@Param('id') id: string) {
     return this.roomsService.remove(+id);
   }
+
+
 }
