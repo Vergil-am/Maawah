@@ -43,6 +43,7 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Post("signin")
   async Signin(@Request() req: any, @Res() res: any) {
+    console.log('api hit');
     const payload = { email: req.user.email, sub: req.user.id };
     const access_token = await this.authService.GenerateJWT(payload);
     const refresh_token = await this.authService.GenerateRefreshToken(payload)

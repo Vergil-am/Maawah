@@ -1,7 +1,7 @@
 import "./globals.css";
 import { Inter as FontSans } from "next/font/google"
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "@/components/theme-provider"
+import { Provider } from "@/lib/provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -16,10 +16,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={fontSans.className}>
       <body className="h-screen  bg-background overflow-x-hidden">
-        {/* <ThemeProvider attribute="class" defaultTheme="light" enableSystem> */}
-        {children}
-        <Toaster />
-        {/* </ThemeProvider> */}
+        <Provider>
+          {children}
+          <Toaster />
+        </Provider>
       </body>
     </html>
   );
