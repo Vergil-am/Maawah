@@ -6,10 +6,9 @@ import { RoomsModule } from './rooms/rooms.module';
 import { AuthModule } from './auth/auth.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { ReservationModule } from './reservation/reservation.module';
-import { CloudinaryModule } from './cloudinary/cloudinary.module';
-
+import { ConfigModule } from '@nestjs/config';
 @Module({
-  imports: [UsersModule, RoomsModule, AuthModule, WishlistModule, ReservationModule, CloudinaryModule],
+  imports: [ConfigModule.forRoot(), UsersModule, RoomsModule, AuthModule, WishlistModule, ReservationModule],
   controllers: [AppController],
   providers: [AppService],
 })

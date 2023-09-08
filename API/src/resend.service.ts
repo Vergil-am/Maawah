@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Resend } from 'resend';
-import { OTPservice } from './auth/otp.service';
 
 @Injectable()
 export class ResendService extends Resend {
   constructor() {
-    super(process.env.RESND_API_KEY)
+    super(process.env.RESEND_API_KEY);
   }
 
   sendConfirmationEmail(Target: string, OTP: string) {
