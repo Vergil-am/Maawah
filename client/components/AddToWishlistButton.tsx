@@ -5,37 +5,35 @@ import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { MakeRequest } from "@/lib/fetcher";
 import { useRouter } from "next/navigation";
-import { useAtomValue } from "jotai";
-import { isLoggedinAtom } from "@/components/Navbar/ProfileMenu";
+import { useSession } from "next-auth/react";
 interface props {
   title: string;
   RoomId: string;
 }
 export default function AddToWishlistButton({ title, RoomId }: props) {
   const router = useRouter()
-  const isLoggedin = useAtomValue(isLoggedinAtom);
+  const { status } = useSession()
   const { toast } = useToast();
 
   const AddToWishlist = async () => {
-    if (isLoggedin) {
-      const options = {
-        method: "post",
-        withCredentials: true,
-        data: {
-          roomId: RoomId,
-        },
-      };
-      const res = await MakeRequest("http://localhost:5000/wishlist", options);
-      console.log(res);
-      // This still needs to be added to a wishlist component
-      toast({
-        title: `${title}`,
-        description: "Added to wishlist",
-        action: <ToastAction altText="Goto wishlist to undo">Undo</ToastAction>,
-      });
-    } else {
-      router.push("/login")
+    if (status === 'unauthenticated') {
+      router.push('/signin')
     }
+    const options = {
+      method: "post",
+      withCredentials: true,
+      data: {
+        roomId: RoomId,
+      },
+    };
+    const res = await MakeRequest("http://localhost:5000/wishlist", options);
+    console.log(res);
+    // This still needs to be added to a wishlist component
+    toast({
+      title: `${title}`,
+      description: "Added to wishlist",
+      action: <ToastAction altText="Goto wishlist to undo">Undo</ToastAction>,
+    });
   };
   return (
     <Button
