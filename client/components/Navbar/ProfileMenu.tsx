@@ -1,9 +1,7 @@
 "use client";
 import * as React from "react";
-import { deleteCookie, getCookie } from "cookies-next";
-
 import { Menu, LucideUser, Home, LifeBuoy, Heart, LogOut, UserPlus } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,24 +13,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
-import { useAtom, atom } from "jotai";
+import { signIn, signOut, useSession } from "next-auth/react";
 
-export const isLoggedinAtom = atom<boolean>(false);
 export default function ProfileMenu() {
-  // const isLoggedin = true;
-  const [isLoggedin, setisLoggedin] = useAtom(isLoggedinAtom);
-  React.useEffect(() => {
-    const RefreshToken = getCookie("refresh_token");
-    if (RefreshToken) {
-      setisLoggedin(true);
-    }
-  }, [isLoggedin]);
-  const handleLogout = () => {
-    // I need to delete cookies
-    deleteCookie("refresh_token");
-    deleteCookie("access_token");
-    setisLoggedin(false);
-  };
+  const { status } = useSession()
 
   return (
     <DropdownMenu>
@@ -49,25 +33,25 @@ export default function ProfileMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 ">
-        {isLoggedin ? (
+        {status === 'authenticated' ? (
           <>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Link className="flex" href="/account">
+                <Link className={buttonVariants({ variant: 'ghost' })} href="/account">
                   <LucideUser className="mr-2 h-4 w-4" />
                   <span>Account</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link className="flex" href="/wishlist">
+                <Link className={buttonVariants({ variant: 'ghost' })} href="/wishlist">
                   <Heart className="mr-2 h-4 w-4" />
                   <span>Whishlist</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link className="flex" href="/host">
+                <Link className={buttonVariants({ variant: 'ghost' })} href="/host">
                   <Home className="mr-2 h-4 w-4" />
                   <span>Become a host</span>
                 </Link>
@@ -78,13 +62,16 @@ export default function ProfileMenu() {
           <>
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Link className="flex" href="/auth/signin">
+                <Button
+                  onClick={() => signIn()}
+                  variant='ghost'
+                >
                   <LucideUser className="mr-2 h-4 w-4" />
                   <span>Signin</span>
-                </Link>
+                </Button>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link className="flex" href="/auth/signup">
+                <Link className={buttonVariants({ variant: 'ghost' })} href="/signup">
                   <UserPlus className="mr-2 h-4 w-4" />
                   <span>Sign up</span>
                 </Link>
@@ -93,17 +80,21 @@ export default function ProfileMenu() {
           </>
         )}
         <DropdownMenuItem>
-          <Link className="flex" href="/help">
+          <Link className={buttonVariants({ variant: 'ghost' })} href="/help">
             <LifeBuoy className="mr-2 h-4 w-4" />
             <span>Help</span>
           </Link>
         </DropdownMenuItem>
-        {isLoggedin && (
+        {status === 'authenticated' && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleLogout()}>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
+            <DropdownMenuItem>
+              <Button
+                onClick={() => signOut()}
+                variant='ghost'>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Sign out</span>
+              </Button>
             </DropdownMenuItem>
           </>
         )}

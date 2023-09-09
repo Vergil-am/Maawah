@@ -2,7 +2,6 @@
 import { MakeRequest } from "@/lib/fetcher";
 import { atom, useAtom, useSetAtom } from "jotai";
 import { loadable } from 'jotai/utils'
-import { isLoggedinAtom } from "@/components/Navbar/ProfileMenu";
 import wishlist from "@/interfaces/wishlist";
 import { toast } from "@/components/ui/use-toast";
 import RoomCard from "@/components/card"
@@ -24,7 +23,6 @@ export default function Wishlist() {
   const [, refreshData] = useAtom(WishlistAtom)
   // refreshData()
   //TODO: I need to redirect if user is not loggedin
-  // const isLoggedin = useAtomValue(isLoggedinAtom);
 
 
   async function HandleDelete(item: wishlist) {

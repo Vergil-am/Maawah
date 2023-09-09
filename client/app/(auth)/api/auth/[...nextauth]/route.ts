@@ -4,9 +4,9 @@ import axios from "axios";
 
 
 const options: NextAuthOptions = {
-  // pages: {
-  //   signIn: '/signin'
-  // },
+  pages: {
+    signIn: '/signin'
+  },
   providers: [
     CredentialsProvider({
       name: "Maawah",
@@ -22,22 +22,16 @@ const options: NextAuthOptions = {
           placeholder: "*****"
         }
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         //TODO: send api call
-        console.log(credentials)
-        const res = await axios.post("http://localhost:5000/auth/signin", credentials);
-        console.log(res)
-        // const user = {
-        //   id: '2132',
-        //   name: "test",
-        //   email: "test@email.com",
-        //   password: "test123"
-        // }
+        const res = await axios.post("http://localhost:5000/auth/signin", {
+          email: credentials?.email,
+          password: credentials?.password
+        });
+
         if (res.data) {
-          console.log(res.data)
           return res.data
         } else {
-          console.log('failed')
           return null
         }
 

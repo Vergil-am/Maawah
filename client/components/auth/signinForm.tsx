@@ -15,12 +15,9 @@ import { Loader2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { useAtom } from "jotai";
-import { useToast } from "@/components/ui/use-toast";
-import { isLoggedinAtom } from "@/components/Navbar/ProfileMenu";
-import axios from "axios";
+
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 const formSchema = z.object({
   email: z.string().email({
     message: "invalid email adress",
@@ -30,15 +27,16 @@ const formSchema = z.object({
   }),
 });
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
+  searchParams: {
+    error: string,
+    callbackUrl: string
+  }
+}
 
 export function SigninForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [isLoggedin, setisLoggedin] = useAtom(isLoggedinAtom);
-  const router = useRouter();
-  if (isLoggedin) {
-    router.push("/");
-  }
+  const { callbackUrl, error } = props.searchParams
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,26 +44,13 @@ export function SigninForm({ className, ...props }: UserAuthFormProps) {
       password: "",
     },
   });
-  const { toast } = useToast();
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    try {
-      setIsLoading(true);
-      await axios.post("http://localhost:5000/auth/signin", values, {
-        withCredentials: true,
-      });
-      setisLoggedin(true);
-      setIsLoading(false);
-      router.push("/");
-    } catch (err: any) {
-      toast({
-        variant: "destructive",
-        title: "error logging in!",
-        description: `${err.response.data.message}`,
-      });
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    signIn('credentials', {
+      email: values.email,
+      password: values.password,
+      callbackUrl: callbackUrl
+    })
   }
 
   return (
